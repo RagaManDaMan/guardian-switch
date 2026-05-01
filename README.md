@@ -13,8 +13,7 @@ Guardian Switch is a "Dead Man's Switch" designed specifically for pet owners. I
 
 ## 🚀 Get Started in 60 Seconds
 
-1.  **Create your Dashboard**: [Click here to make a copy of the Template](https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/copy) 
-    *(Note: Replace YOUR_SHEET_ID_HERE with your Master Sheet ID once you've created it)*.
+1.  **Create your Dashboard**: [Click here to make a copy of the Template](https://docs.google.com/spreadsheets/d/14PwHfHiMY8jsoJ30ck3qPir__uP0ReQepwXN3E4N_rc/copy) 
 2.  **Add the Brain**: Copy the code from [Code.gs](Code.gs) into your Google Sheet's script editor (**Extensions > Apps Script**).
 3.  **Activate**: In your Google Sheet, use the new **🛡️ Guardian Switch** menu and click **🚀 Start System**.
 

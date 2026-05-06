@@ -4,26 +4,27 @@ Guardian Switch is a "Dead Man's Switch" designed specifically for pet owners. I
 
 ## 🌟 Why Guardian Switch?
 
+*   **Human-Friendly Logic**: Reminders are sent at 8:00 AM, but alerts are only triggered if no check-in is detected by 10:00 PM. This provides a 14-hour daily grace period.
 *   **Privacy First**: No third-party apps, no passwords, and no data sharing. The entire system runs inside **your own** Google account.
+*   **Academic Discoveries**: Includes a "Daily Discovery" engine that shares complex biological and animal facts every morning.
 *   **Cloud-Reliable**: Unlike phone apps, this runs on Google's servers. It works even if your phone is dead or lost.
-*   **Engaging**: Includes a "Daily Discovery" engine that shares fascinating biological and animal facts every morning.
-*   **Open Source**: Free forever, built for the community.
 
 ---
 
 ## 🚀 Get Started in 60 Seconds
 
-1.  **Create your Dashboard**: [Click here to make a copy of the Template](https://docs.google.com/spreadsheets/d/14PwHfHiMY8jsoJ30ck3qPir__uP0ReQepwXN3E4N_rc/copy) 
+1.  **Create your Dashboard**: [Click here to make a copy of the Template](https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/copy) 
+    *(Note: Replace YOUR_SHEET_ID_HERE with your Master Sheet ID once you've created it)*.
 2.  **Add the Brain**: Copy the code from [Code.gs](Code.gs) into your Google Sheet's script editor (**Extensions > Apps Script**).
 3.  **Activate**: In your Google Sheet, use the new **🛡️ Guardian Switch** menu and click **🚀 Start System**.
 
 ---
 
-## 🛠️ How it Works
+## 🛠️ How it Works (Human-Friendly Mode)
 
-1.  **Daily Discovery**: Every morning at 8:00 AM, you receive an email with a unique animal fact and a "Confirm Safety" button.
-2.  **The Heartbeat**: Clicking the button updates your "Heartbeat" timestamp in the cloud.
-3.  **The Sentinel**: A background process checks your heartbeat hourly. If you haven't checked in for 24 hours (or your custom window), it dispatches emergency emails to your designated friends.
+1.  **8:00 AM Reminder**: You receive an email with a unique biological fact and a "Confirm Safety" button.
+2.  **The Grace Period**: You have all day to click the button whenever you are free.
+3.  **10:00 PM Sentinel**: An automated check runs at 10:00 PM. If you haven't checked in for the day, it dispatches emergency emails to your designated friends.
 
 ## 📜 License
 

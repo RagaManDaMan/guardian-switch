@@ -1,8 +1,8 @@
 /**
- * GUARDIAN SWITCH - ACADEMIC EDITION
+ * GUARDIAN SWITCH - HUMAN-FRIENDLY EDITION
  * A privacy-first safety switch for pet owners.
  * 
- * GitHub: https://github.com/ragavan/guardian-switch
+ * GitHub: https://github.com/RagaManDaMan/guardian-switch
  */
 
 const ACADEMIC_FACTS = [
@@ -34,7 +34,6 @@ function getConfig() {
   return {
     USER_NAME: sheet.getRange("B1").getValue() || "User",
     FRIENDS_EMAILS: sheet.getRange("B2").getValue(),
-    CHECKIN_WINDOW_HOURS: sheet.getRange("B3").getValue() || 24,
     FORM_URL: props.getProperty('FORM_URL'),
     FORM_ID: props.getProperty('FORM_ID'),
     USER_EMAIL: Session.getActiveUser().getEmail()
@@ -62,7 +61,7 @@ function installer_runSetup() {
     const labels = [
       ["Your Name", "Sarah"],
       ["Emergency Emails (separated by commas)", "friend1@gmail.com, friend2@gmail.com"],
-      ["How many hours to wait before alerting friends", "24"]
+      ["Alert Grace Period", "Remind at 8 AM, Alert at 10 PM"]
     ];
     sheet.getRange("A1:B3").setValues(labels);
     sheet.getRange("A1:A3").setFontWeight("bold").setBackground("#f1f5f9");
@@ -81,7 +80,7 @@ function installer_runSetup() {
   
   if (!config.FORM_URL) {
     const form = FormApp.create(`Guardian Switch Check-in for ${config.USER_NAME}`);
-    form.setDescription("Submit this form to confirm your safety and the care of your animals for the next 24 hours.");
+    form.setDescription("Submit this form daily to confirm your safety.");
     form.addSectionHeaderItem().setTitle("Confirmation of Safety");
     props.setProperty('FORM_URL', form.getPublishedUrl());
     props.setProperty('FORM_ID', form.getId());
@@ -94,7 +93,7 @@ function installer_runSetup() {
   props.setProperty('LAST_CHECKIN', new Date().getTime().toString());
   props.setProperty('ALERT_SENT', 'false');
   
-  SpreadsheetApp.getUi().alert('✅ Guardian Switch is ACTIVE.\n\nYour Daily Discovery reminder is scheduled for 8 AM daily.');
+  SpreadsheetApp.getUi().alert('✅ Guardian Switch is ACTIVE.\n\nReminder: 8 AM | Final Alert Check: 10 PM');
 }
 
 function installer_stop(silent) {
@@ -116,7 +115,7 @@ function sendDailyReminder() {
         <strong>Daily Discovery:</strong> ${fact}
       </p>
       <div style="margin-top: 40px; text-align: center;">
-        <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">Confirming your safety status updates your heartbeat for the next 24 hours.</p>
+        <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">Please click below before 10:00 PM tonight to confirm your status.</p>
         <a href="${config.FORM_URL}" style="background-color: #f59e0b; color: white; padding: 15px 40px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">CONFIRM SAFETY STATUS</a>
       </div>
     </div>
@@ -138,7 +137,6 @@ function checkHeartbeat() {
   
   const form = FormApp.openById(formId);
   const responses = form.getResponses();
-  
   let lastCheckinTime = parseInt(props.getProperty('LAST_CHECKIN') || "0");
   
   if (responses.length > 0) {
@@ -150,53 +148,46 @@ function checkHeartbeat() {
     }
   }
 
-  const now = new Date().getTime();
-  const diffHours = (now - lastCheckinTime) / (1000 * 60 * 60);
-
-  if (diffHours > config.CHECKIN_WINDOW_HOURS && props.getProperty('ALERT_SENT') !== 'true') {
-    MailApp.sendEmail({
-      to: config.FRIENDS_EMAILS,
-      subject: `URGENT: Safety Alert for ${config.USER_NAME}`,
-      body: `URGENT: ${config.USER_NAME} has missed her ${config.CHECKIN_WINDOW_HOURS}-hour safety check-in. Please check on her and her animals immediately.`
-    });
-    props.setProperty('ALERT_SENT', 'true');
+  const now = new Date();
+  const currentHour = now.getHours();
+  
+  if (currentHour >= 22) {
+    const todayLimit = new Date();
+    todayLimit.setHours(4, 0, 0, 0);
+    
+    if (lastCheckinTime < todayLimit.getTime() && props.getProperty('ALERT_SENT') !== 'true') {
+      MailApp.sendEmail({
+        to: config.FRIENDS_EMAILS,
+        subject: `URGENT: Safety Alert for ${config.USER_NAME}`,
+        body: `URGENT: ${config.USER_NAME} has missed her daily check-in. The 10:00 PM safety check failed. Please check on her immediately.`
+      });
+      props.setProperty('ALERT_SENT', 'true');
+    }
   }
 }
 
 function test_checkStatus() {
-  const config = getConfig();
   const props = PropertiesService.getScriptProperties();
   const lastCheckin = parseInt(props.getProperty('LAST_CHECKIN') || "0");
-  const now = new Date().getTime();
-  const diffHours = (now - lastCheckin) / (1000 * 60 * 60);
-  const remaining = config.CHECKIN_WINDOW_HOURS - diffHours;
+  const todayLimit = new Date();
+  todayLimit.setHours(4, 0, 0, 0);
   
-  let msg = `System Status for ${config.USER_NAME}:\n\n`;
+  let msg = `System Status:\n\n`;
   msg += `Last Check-in: ${new Date(lastCheckin).toLocaleString()}\n`;
-  msg += `Time since check-in: ${diffHours.toFixed(2)} hours\n`;
-  
-  if (remaining > 0) {
-    msg += `Time remaining until alert: ${remaining.toFixed(2)} hours\n`;
-    msg += `Status: ✅ SECURE`;
+  if (lastCheckin > todayLimit.getTime()) {
+    msg += `Status: ✅ SECURE (Checked in today)\n`;
   } else {
-    msg += `Status: ⚠️ ALERT CONDITION MET\n`;
-    msg += `Alert Sent: ${props.getProperty('ALERT_SENT') || 'false'}`;
+    msg += `Status: ⚠️ PENDING (Waiting for today's check-in)\nNext Step: Alert will fire if no check-in by 10:00 PM tonight.`;
   }
-  
   SpreadsheetApp.getUi().alert(msg);
 }
 
 function test_forceAlert() {
   const config = getConfig();
   const ui = SpreadsheetApp.getUi();
-  const response = ui.alert('⚠️ FORCE ALERT', 'This will immediately send the emergency email to: ' + config.FRIENDS_EMAILS + '.\n\nProceed?', ui.ButtonSet.YES_NO);
-  
+  const response = ui.alert('⚠️ FORCE ALERT', 'Send test alert to: ' + config.FRIENDS_EMAILS + '?', ui.ButtonSet.YES_NO);
   if (response == ui.Button.YES) {
-    MailApp.sendEmail({
-      to: config.FRIENDS_EMAILS,
-      subject: `[TEST ALERT] Safety Alert for ${config.USER_NAME}`,
-      body: `This is a TEST of the Guardian Switch system. If this were real, it would mean ${config.USER_NAME} has missed her check-in.`
-    });
-    ui.alert('Test alert sent.');
+    MailApp.sendEmail({ to: config.FRIENDS_EMAILS, subject: `[TEST ALERT]`, body: `Test Alert Successful.` });
+    ui.alert('Sent.');
   }
 }

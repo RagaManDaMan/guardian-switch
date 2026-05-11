@@ -20,6 +20,15 @@ Guardian Switch is a "Dead Man's Switch" designed specifically for pet owners. I
 
 ---
 
+## 🌍 Note on Time Zones
+By default, the script might use the developer's time zone. To ensure reminders arrive at **your** 8:00 AM:
+1. Open the script editor (**Extensions > Apps Script**).
+2. Click the **Project Settings** (gear icon ⚙️) on the left.
+3. Change the **Time zone** to your local city.
+4. Go back to the sheet and click **🚀 Start System** again.
+
+---
+
 ## 🛠️ How it Works (Human-Friendly Mode)
 
 1.  **8:00 AM Reminder**: You receive an email with a unique biological fact and a "Confirm Safety" button.

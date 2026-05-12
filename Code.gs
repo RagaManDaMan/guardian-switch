@@ -159,7 +159,7 @@ function checkHeartbeat() {
       MailApp.sendEmail({
         to: config.FRIENDS_EMAILS,
         subject: `URGENT: Safety Alert for ${config.USER_NAME}`,
-        body: `URGENT: ${config.USER_NAME} has missed her daily check-in. The 10:00 PM safety check failed. Please check on her immediately.`
+        body: `URGENT: ${config.USER_NAME} has missed their daily check-in. The 10:00 PM safety check failed. Please check on them and their animals immediately.`
       });
       props.setProperty('ALERT_SENT', 'true');
     }
@@ -187,7 +187,11 @@ function test_forceAlert() {
   const ui = SpreadsheetApp.getUi();
   const response = ui.alert('⚠️ FORCE ALERT', 'Send test alert to: ' + config.FRIENDS_EMAILS + '?', ui.ButtonSet.YES_NO);
   if (response == ui.Button.YES) {
-    MailApp.sendEmail({ to: config.FRIENDS_EMAILS, subject: `[TEST ALERT]`, body: `Test Alert Successful.` });
-    ui.alert('Sent.');
+    MailApp.sendEmail({
+      to: config.FRIENDS_EMAILS,
+      subject: `[TEST ALERT] Safety Alert for ${config.USER_NAME}`,
+      body: `This is a TEST of the Guardian Switch system. If this were real, it would mean ${config.USER_NAME} has missed their check-in.`
+    });
+    ui.alert('Test alert sent.');
   }
 }

@@ -34,6 +34,8 @@ function getConfig() {
   return {
     USER_NAME: sheet.getRange("B1").getValue() || "User",
     FRIENDS_EMAILS: sheet.getRange("B2").getValue(),
+    CHECKIN_WINDOW_HOURS: sheet.getRange("B3").getValue() || 24,
+    CUSTOM_MESSAGE: sheet.getRange("B4").getValue() || "Please check on them and their animals immediately.",
     FORM_URL: props.getProperty('FORM_URL'),
     FORM_ID: props.getProperty('FORM_ID'),
     USER_EMAIL: Session.getActiveUser().getEmail()
@@ -61,11 +63,12 @@ function installer_runSetup() {
     const labels = [
       ["Your Name", "Sarah"],
       ["Emergency Emails (separated by commas)", "friend1@gmail.com, friend2@gmail.com"],
-      ["Alert Grace Period", "Remind at 8 AM, Alert at 10 PM"]
+      ["Alert Grace Period", "Remind at 8 AM, Alert at 10 PM"],
+      ["Custom Emergency Message", "Please check on them and their animals immediately."]
     ];
-    sheet.getRange("A1:B3").setValues(labels);
-    sheet.getRange("A1:A3").setFontWeight("bold").setBackground("#f1f5f9");
-    sheet.getRange("B1:B3").setBackground("#fffbeb");
+    sheet.getRange("A1:B4").setValues(labels);
+    sheet.getRange("A1:A4").setFontWeight("bold").setBackground("#f1f5f9");
+    sheet.getRange("B1:B4").setBackground("#fffbeb");
     sheet.setColumnWidth(1, 350);
     sheet.setColumnWidth(2, 400);
     SpreadsheetApp.getUi().alert("✨ Dashboard Created! Please fill in the details and click Start again.");
@@ -159,7 +162,7 @@ function checkHeartbeat() {
       MailApp.sendEmail({
         to: config.FRIENDS_EMAILS,
         subject: `URGENT: Safety Alert for ${config.USER_NAME}`,
-        body: `URGENT: ${config.USER_NAME} has missed their daily check-in. The 10:00 PM safety check failed. Please check on them and their animals immediately.`
+        body: `URGENT: ${config.USER_NAME} has missed their daily check-in. The 10:00 PM safety check failed. ${config.CUSTOM_MESSAGE}`
       });
       props.setProperty('ALERT_SENT', 'true');
     }
